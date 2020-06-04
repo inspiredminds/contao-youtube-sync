@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * (c) inspiredminds
  *
- * @license proprietary
+ * @license LGPL-3.0-or-later
  */
 
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
@@ -50,10 +50,10 @@ $GLOBALS['TL_DCA']['tl_news_archive']['fields']['youtube_sync_update'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_news_archive']['fields']['youtube_sync_dir'] = [
-	'exclude' => true,
-	'inputType' => 'fileTree',
-	'eval' => ['tl_class' => 'clr', 'mandatory' => true, 'fieldType'=>'radio'],
-	'sql' => ['type' => 'binary', 'length' => 16, 'notnull' => false],
+    'exclude' => true,
+    'inputType' => 'fileTree',
+    'eval' => ['tl_class' => 'clr', 'mandatory' => true, 'fieldType' => 'radio'],
+    'sql' => ['type' => 'binary', 'length' => 16, 'notnull' => false],
 ];
 
 PaletteManipulator::create()

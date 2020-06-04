@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * (c) inspiredminds
  *
- * @license proprietary
+ * @license LGPL-3.0-or-later
  */
 
 namespace InspiredMinds\ContaoYouTubeSync\Sync;
@@ -120,7 +120,7 @@ class NewsYouTubeSync
             $news->author = (int) $newsArchive->youtube_sync_author;
             $news->youtube_id = $details->getVideoId();
             $news->alias = $this->contaoSlug->generate($snippet->getTitle(), $newsArchive->jumpTo, function (string $alias): bool {
-                return (int) $this->db->executeQuery("SELECT id FROM tl_news WHERE alias = ?", [$alias])->fetchColumn() > 0;
+                return (int) $this->db->executeQuery('SELECT id FROM tl_news WHERE alias = ?', [$alias])->fetchColumn() > 0;
             });
 
             if ($newsArchive->youtube_sync_publish) {
@@ -159,7 +159,7 @@ class NewsYouTubeSync
 
         foreach ($thumbnails as $thumbnail) {
             $res = $thumbnail->width * $thumbnail->height;
-            
+
             if ($res > $thumbnailRes) {
                 $thumbnailRes = $res;
                 $thumbnailUrl = $thumbnail->url;

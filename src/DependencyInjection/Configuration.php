@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * (c) inspiredminds
  *
- * @license proprietary
+ * @license LGPL-3.0-or-later
  */
 
 namespace InspiredMinds\ContaoYouTubeSync\DependencyInjection;

@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * (c) inspiredminds
  *
- * @license proprietary
+ * @license LGPL-3.0-or-later
  */
 
 $GLOBALS['TL_LANG']['tl_news_archive']['youtube_sync_legend'] = 'YouTube synchronisation';

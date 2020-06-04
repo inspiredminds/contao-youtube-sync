@@ -1,0 +1,3 @@
+contao_youtube_sync:
+  resource: "@ContaoYouTubeSyncBundle/Action"
+  type: annotation

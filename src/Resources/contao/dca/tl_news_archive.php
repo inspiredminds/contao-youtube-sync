@@ -11,6 +11,14 @@ declare(strict_types=1);
  */
 
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
+use InspiredMinds\ContaoYouTubeSync\Action\SyncAction;
+
+array_insert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'], 1, [
+    'youtube_sync_trigger' => [
+        'route' => SyncAction::class,
+        'icon' => 'bundles/contaoyoutubesync/youtube.svg',
+    ],
+]);
 
 $GLOBALS['TL_DCA']['tl_news_archive']['fields']['enable_youtube_sync'] = [
     'inputType' => 'checkbox',
@@ -22,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_news_archive']['fields']['enable_youtube_sync'] = [
 $GLOBALS['TL_DCA']['tl_news_archive']['fields']['youtube_channel_id'] = [
     'inputType' => 'text',
     'exclude' => true,
-    'eval' => ['maxlength' => 64, 'tl_class' => 'w50'],
+    'eval' => ['maxlength' => 64, 'tl_class' => 'w50', 'mandatory' => true],
     'sql' => ['type' => 'string', 'length' => 64, 'default' => ''],
 ];
 

@@ -17,3 +17,4 @@ $GLOBALS['TL_LANG']['tl_news_archive']['youtube_sync_author'] = ['Author', 'The 
 $GLOBALS['TL_LANG']['tl_news_archive']['youtube_sync_publish'] = ['Publish new entries', 'Automatically publish newly synchronised entries.'];
 $GLOBALS['TL_LANG']['tl_news_archive']['youtube_sync_update'] = ['Update existing entries', 'Automatically update already synchronised entries.'];
 $GLOBALS['TL_LANG']['tl_news_archive']['youtube_sync_dir'] = ['Target directory', 'Target directory for downloaded teaser images.'];
+$GLOBALS['TL_LANG']['tl_news_archive']['youtube_sync_trigger'] = 'YouTube sync';

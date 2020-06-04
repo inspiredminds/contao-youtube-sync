@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    autoconfigure: true
+
   contao_youtube_sync.google_client:
     class: Google_Client
     arguments:
@@ -11,11 +14,24 @@ services:
     arguments:
       - '@contao_youtube_sync.google_client'
 
+  InspiredMinds\ContaoYouTubeSync\Action\SyncAction:
+    public: true
+    arguments:
+      - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'
+      - '@router'
+      - '@twig'
+      - '@translator'
+
   InspiredMinds\ContaoYouTubeSync\Command\SyncCommand:
     arguments:
       - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'
     tags:
       - { name: 'console.command', command: 'contao_youtube_sync:sync' }
+
+  InspiredMinds\ContaoYouTubeSync\Cron\SyncCron:
+    arguments:
+      - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'
+      - '@logger'
 
   InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync:
     arguments:

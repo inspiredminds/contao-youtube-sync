@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the CalendarSyncBundle.
+ * This file is part of the Contao YouTube Sync extension.
  *
  * (c) inspiredminds
  *
- * @license proprietary
+ * @license LGPL-3.0-or-later
  */
 
 namespace InspiredMinds\ContaoYouTubeSync\Action;
@@ -45,7 +45,7 @@ class SyncAction
     {
         $count = (int) NewsModel::countAll();
         ($this->newsSync)();
-        $count = (int) NewsModel::countAll() - $count;;
+        $count = (int) NewsModel::countAll() - $count;
 
         return new Response(
             $this->twig->render('@ContaoYouTubeSync/sync.html.twig', [

@@ -1,0 +1,26 @@
+services:
+  contao_youtube_sync.google_client:
+    class: Google_Client
+    arguments:
+      -
+        application_name: '%contao_youtube_sync.application_name%'
+        developer_key: '%contao_youtube_sync.developer_key%'
+  
+  contao_youtube_sync.google_service_youtube:
+    class: Google_Service_YouTube
+    arguments:
+      - '@contao_youtube_sync.google_client'
+
+  InspiredMinds\ContaoYouTubeSync\Command\SyncCommand:
+    arguments:
+      - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'
+    tags:
+      - { name: 'console.command', command: 'contao_youtube_sync:sync' }
+
+  InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync:
+    arguments:
+      - '@contao_youtube_sync.google_service_youtube'
+      - '@contao.framework'
+      - '@contao.slug'
+      - '@database_connection'
+      - '%kernel.project_dir%'

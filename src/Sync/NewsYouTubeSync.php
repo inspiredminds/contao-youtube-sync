@@ -125,6 +125,8 @@ class NewsYouTubeSync
         $news->youtube_data = json_encode($video->toSimpleObject());
 
         if (!empty($description = trim((string) $snippet->getDescription()))) {
+            // parse URLs (https://gist.github.com/jasny/2000705)
+            $description = preg_replace('@(?:(https?)://([^\s<]+)|(www\.[^\s<]+?\.[^\s<]+))(?<![\.,:])@i', '<a href="$0" target="_blank" rel="noopener">$0</a>', $description);
             $news->teaser = '<p>'.nl2br($description).'</p>';
         }
 

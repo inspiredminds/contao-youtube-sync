@@ -38,7 +38,7 @@ class SyncCron implements ServiceAnnotationInterface
             ($this->newsYouTubeSync)();
         } catch (\Throwable $e) {
             $this->logger->error('Error while synchronising news entries from YouTube: '.$e->getMessage(), [
-                'contao' => new ContaoContext(__METHOD__, 'ERROR'),
+                'contao' => new ContaoContext(self::class, 'ERROR'),
             ]);
         }
     }

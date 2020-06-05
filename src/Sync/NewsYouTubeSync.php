@@ -47,7 +47,7 @@ class NewsYouTubeSync
 
         $enabledNewsArchives = NewsArchiveModel::findBy([
             'enable_youtube_sync = 1',
-            "youtube_channel_id != ''",
+            "youtube_playlist_id != ''",
         ], []);
 
         if (null === $enabledNewsArchives) {
@@ -62,27 +62,8 @@ class NewsYouTubeSync
 
     private function syncNewsArchive(NewsArchiveModel $newsArchive): void
     {
-        $response = $this->youtube->channels->listChannels('snippet,contentDetails', [
-            'id' => $newsArchive->youtube_channel_id,
-        ]);
-
-        $channels = $response->getItems();
-
-        if (empty($channels)) {
-            return;
-        }
-
-        /** @var \Google_Service_YouTube_Channel $channel */
-        $channel = reset($channels);
-
-        $uploadsPlaylist = $channel
-            ->getContentDetails()
-            ->getRelatedPlaylists()
-            ->getUploads()
-        ;
-
         $params = [
-            'playlistId' => $uploadsPlaylist,
+            'playlistId' => $newsArchive->youtube_playlist_id,
             'maxResults' => 50,
         ];
 

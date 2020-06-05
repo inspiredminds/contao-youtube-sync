@@ -1,6 +1,6 @@
 {
     "name": "inspiredminds/contao-youtube-sync",
-    "description": "Contao extension to synchronize a contao news archive with a YouTube channel.",
+    "description": "Contao extension to synchronize a contao news archive with a YouTube playlist.",
     "type": "contao-bundle",
     "license": "LGPL-3.0-or-later",
     "authors": [

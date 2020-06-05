@@ -5,7 +5,7 @@
 Contao YouTube Sync
 ===================
 
-This extension allows you to automatically import all uploaded videos of a YouTube channels as news entries in Contao.
+This extension allows you to automatically import all uploaded videos of a YouTube playlist as news entries in Contao.
 
 ## Configuration
 
@@ -29,7 +29,7 @@ Once this extension is installed, you will have additional options in the settin
 
 <img src="https://raw.githubusercontent.com/inspiredminds/contao-youtube-sync/master/screenshot.png" width="735" alt="YouTube synchronisation settings">
 
-Enable the synchronisation and set the YouTube channel ID from which to import videos as news entries. You also need to define a default author for the synchronised entries and a target directory for the downloaded thumbnail images. Optionally you can define whether new entries should be published by default or not and if already synchronised entries should always be updated (this will not update the alias or author).
+Enable the synchronisation and set the YouTube playlist ID from which to import videos as news entries. You also need to define a default author for the synchronised entries and a target directory for the downloaded thumbnail images. Optionally you can define whether new entries should be published by default or not and if already synchronised entries should always be updated (this will not update the alias or author).
 
 ## Synchronisation
 
@@ -53,7 +53,7 @@ This event lets you retrieve the `\Contao\NewsModel` to be saved to the database
 
 There will be two additional variables available within a news template:
 
-* `$this->youtube_id`: This will contain the video ID of the YouTube video, if the news article was imported from a YouTube channel.
+* `$this->youtube_id`: This will contain the video ID of the YouTube video, if the news article was imported from a YouTube playlist.
 * `$this->youtube_data`: This is an object containing the original data of the video from the Google YouTube API.
 
 The extension also provides a basic `news_youtube` template, which can be used instead of the `news_full` template for the newsreader of YouTube videos. The template contains markup to show the YouTube video embedded in an iframe.

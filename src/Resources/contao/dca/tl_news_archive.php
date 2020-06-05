@@ -27,7 +27,7 @@ $GLOBALS['TL_DCA']['tl_news_archive']['fields']['enable_youtube_sync'] = [
     'sql' => ['type' => 'boolean', 'default' => 0],
 ];
 
-$GLOBALS['TL_DCA']['tl_news_archive']['fields']['youtube_channel_id'] = [
+$GLOBALS['TL_DCA']['tl_news_archive']['fields']['youtube_playlist_id'] = [
     'inputType' => 'text',
     'exclude' => true,
     'eval' => ['maxlength' => 64, 'tl_class' => 'w50', 'mandatory' => true],
@@ -71,4 +71,4 @@ PaletteManipulator::create()
 ;
 
 $GLOBALS['TL_DCA']['tl_news_archive']['palettes']['__selector__'][] = 'enable_youtube_sync';
-$GLOBALS['TL_DCA']['tl_news_archive']['subpalettes']['enable_youtube_sync'] = 'youtube_channel_id,youtube_sync_author,youtube_sync_publish,youtube_sync_update,youtube_sync_dir';
+$GLOBALS['TL_DCA']['tl_news_archive']['subpalettes']['enable_youtube_sync'] = 'youtube_playlist_id,youtube_sync_author,youtube_sync_publish,youtube_sync_update,youtube_sync_dir';

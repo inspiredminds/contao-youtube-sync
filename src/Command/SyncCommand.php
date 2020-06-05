@@ -19,12 +19,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SyncCommand extends Command
 {
-    private $newsSync;
+    private $newsYouTubeSync;
 
-    public function __construct(NewsYouTubeSync $newsSync)
+    public function __construct(NewsYouTubeSync $newsYouTubeSync)
     {
         parent::__construct();
-        $this->newsSync = $newsSync;
+        $this->newsYouTubeSync = $newsYouTubeSync;
     }
 
     protected function configure(): void
@@ -34,6 +34,6 @@ class SyncCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        ($this->newsSync)();
+        ($this->newsYouTubeSync)();
     }
 }

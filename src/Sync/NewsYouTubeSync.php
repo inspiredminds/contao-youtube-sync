@@ -19,6 +19,8 @@ use Contao\FilesModel;
 use Contao\NewsArchiveModel;
 use Contao\NewsModel;
 use Doctrine\DBAL\Connection;
+use InspiredMinds\ContaoYouTubeSync\Event\NewsYouTubeSyncEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class NewsYouTubeSync
 {
@@ -26,14 +28,16 @@ class NewsYouTubeSync
     private $framework;
     private $contaoSlug;
     private $db;
+    private $eventDispatcher;
     private $projectDir;
 
-    public function __construct(\Google_Service_YouTube $youtube, ContaoFramework $framework, Slug $contaoSlug, Connection $db, string $projectDir)
+    public function __construct(\Google_Service_YouTube $youtube, ContaoFramework $framework, Slug $contaoSlug, Connection $db, EventDispatcherInterface $eventDispatcher, string $projectDir)
     {
         $this->youtube = $youtube;
         $this->framework = $framework;
         $this->contaoSlug = $contaoSlug;
         $this->db = $db;
+        $this->eventDispatcher = $eventDispatcher;
         $this->projectDir = $projectDir;
     }
 
@@ -148,7 +152,12 @@ class NewsYouTubeSync
             $news->singleSRC = $teaserImage->uuid;
         }
 
-        $news->save();
+        $event = new NewsYouTubeSyncEvent($news, $video);
+        $this->eventDispatcher->dispatch($event);
+
+        if (!$event->getDiscard()) {
+            $news->save();
+        }
     }
 
     private function downloadTeaserImage(NewsArchiveModel $newsArchive, \Google_Service_YouTube_PlaylistItem $video): ?FilesModel

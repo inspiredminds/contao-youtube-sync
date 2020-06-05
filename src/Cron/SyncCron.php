@@ -23,19 +23,19 @@ use Terminal42\ServiceAnnotationBundle\ServiceAnnotationInterface;
  */
 class SyncCron implements ServiceAnnotationInterface
 {
-    private $newsSync;
+    private $newsYouTubeSync;
     private $logger;
 
-    public function __construct(NewsYouTubeSync $newsSync, LoggerInterface $logger)
+    public function __construct(NewsYouTubeSync $newsYouTubeSync, LoggerInterface $logger)
     {
-        $this->newsSync = $newsSync;
+        $this->newsYouTubeSync = $newsYouTubeSync;
         $this->logger = $logger;
     }
 
     public function __invoke(): void
     {
         try {
-            ($this->newsSync)();
+            ($this->newsYouTubeSync)();
         } catch (\Throwable $e) {
             $this->logger->error('Error while synchronising news entries from YouTube: '.$e->getMessage(), [
                 'contao' => new ContaoContext(__METHOD__, 'ERROR'),

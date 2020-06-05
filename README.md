@@ -38,3 +38,22 @@ Synchronisation can be triggered in three ways:
 * **Cronjob**: exectued hourly.
 * **Command**: `contao_youtube_sync:sync`
 * **Back end**: in the article overview, use the _YouTube sync_ link in the global operations.
+
+## Events
+
+Whenever a YouTube video is imported as a news article (or whenever a news article is updated), the following event will be dispatched:
+
+```
+InspiredMinds\ContaoYouTubeSync\Event\NewsYouTubeSyncEvent
+```
+
+This event lets you retrieve the `\Contao\NewsModel` to be saved to the database, as well as the `\Google_Service_YouTube_PlaylistItem` instance of the YouTube video. It also allows you to _discard_ the news article (or the changes added to it) by setting `$event->setDiscard(true)`.
+
+## Templates
+
+There will be two additional variables available within a news template:
+
+* `$this->youtube_id`: This will contain the video ID of the YouTube video, if the news article was imported from a YouTube channel.
+* `$this->youtube_data`: This is an object containing the original data of the video from the Google YouTube API.
+
+The extension also provides a basic `news_youtube` template, which can be used instead of the `news_full` template for the newsreader of YouTube videos. The template contains markup to show the YouTube video embedded in an iframe.

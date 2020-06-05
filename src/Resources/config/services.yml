@@ -33,10 +33,13 @@ services:
       - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'
       - '@logger'
 
+  InspiredMinds\ContaoYouTubeSync\EventListener\ParseArticlesListener: ~
+
   InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync:
     arguments:
       - '@contao_youtube_sync.google_service_youtube'
       - '@contao.framework'
       - '@contao.slug'
       - '@database_connection'
+      - '@event_dispatcher'
       - '%kernel.project_dir%'

@@ -28,14 +28,14 @@ use Twig\Environment;
  */
 class SyncAction
 {
-    private $newsSync;
+    private $newsYouTubeSync;
     private $router;
     private $twig;
     private $translator;
 
-    public function __construct(NewsYouTubeSync $newsSync, RouterInterface $router, Environment $twig, TranslatorInterface $translator)
+    public function __construct(NewsYouTubeSync $newsYouTubeSync, RouterInterface $router, Environment $twig, TranslatorInterface $translator)
     {
-        $this->newsSync = $newsSync;
+        $this->newsYouTubeSync = $newsYouTubeSync;
         $this->router = $router;
         $this->twig = $twig;
         $this->translator = $translator;
@@ -44,7 +44,7 @@ class SyncAction
     public function __invoke(): Response
     {
         $count = (int) NewsModel::countAll();
-        ($this->newsSync)();
+        ($this->newsYouTubeSync)();
         $count = (int) NewsModel::countAll() - $count;
 
         return new Response(

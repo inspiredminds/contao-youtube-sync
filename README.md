@@ -35,7 +35,7 @@ Enable the synchronisation and set the YouTube playlist ID from which to import 
 
 Synchronisation can be triggered in three ways:
 
-* **Cronjob**: exectued hourly.
+* **Cronjob**: executed hourly.
 * **Command**: `contao_youtube_sync:sync`
 * **Back end**: in the article overview, use the _YouTube sync_ link in the global operations.
 

@@ -162,9 +162,8 @@ class NewsYouTubeSync
             $fileInfo = new \SplFileInfo($thumbnailUrl);
             $videoId = $video->getContentDetails()->getVideoId();
 
-            $hash = substr(md5($videoId.$fileInfo->getFilename()), 0, 8);
-            $downloadDir = $targetDir->path.'/'.strtolower(substr($hash, 0, 1));
-            $downloadPath = $downloadDir.'/'.$hash.'_'.$videoId.'_'.$fileInfo->getFilename();
+            $downloadDir = $targetDir->path.'/'.strtolower(substr($videoId, 0, 1));
+            $downloadPath = $downloadDir.'/'.$videoId.'_'.$fileInfo->getFilename();
 
             if (!file_exists($this->projectDir.'/'.$downloadDir)) {
                 mkdir($this->projectDir.'/'.$downloadDir, 0777, true);

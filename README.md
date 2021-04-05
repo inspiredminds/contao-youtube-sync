@@ -1,4 +1,3 @@
-[![](https://img.shields.io/maintenance/yes/2020.svg)](https://github.com/inspiredminds/contao-youtube-sync)
 [![](https://img.shields.io/packagist/v/inspiredminds/contao-youtube-sync.svg)](https://packagist.org/packages/inspiredminds/contao-youtube-sync)
 [![](https://img.shields.io/packagist/dt/inspiredminds/contao-youtube-sync.svg)](https://packagist.org/packages/inspiredminds/contao-youtube-sync)
 

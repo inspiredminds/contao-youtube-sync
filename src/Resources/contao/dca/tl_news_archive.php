@@ -10,15 +10,22 @@ declare(strict_types=1);
  * @license LGPL-3.0-or-later
  */
 
+use Contao\ArrayUtil;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use InspiredMinds\ContaoYouTubeSync\Action\SyncAction;
 
-array_insert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'], 1, [
+$globalOperation = [
     'youtube_sync_trigger' => [
         'route' => SyncAction::class,
         'icon' => 'bundles/contaoyoutubesync/youtube.svg',
     ],
-]);
+];
+
+if (class_exists(ArrayUtil::class)) {
+    ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'], 1, $globalOperation);
+} else {
+    array_insert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'], 1, $globalOperation);
+}
 
 $GLOBALS['TL_DCA']['tl_news_archive']['fields']['enable_youtube_sync'] = [
     'inputType' => 'checkbox',

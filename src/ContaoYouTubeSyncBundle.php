@@ -13,11 +13,12 @@ declare(strict_types=1);
 namespace InspiredMinds\ContaoYouTubeSync;
 
 use InspiredMinds\ContaoYouTubeSync\DependencyInjection\ContaoYouTubeSyncExtension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ContaoYouTubeSyncBundle extends Bundle
 {
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         if (null === $this->extension) {
             $this->extension = new ContaoYouTubeSyncExtension();

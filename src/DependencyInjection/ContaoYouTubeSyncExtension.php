@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class ContaoYouTubeSyncExtension extends Extension
 {
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'contao_youtube_sync';
     }

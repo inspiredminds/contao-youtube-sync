@@ -36,6 +36,6 @@ class SyncCommand extends Command
     {
         ($this->newsYouTubeSync)();
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

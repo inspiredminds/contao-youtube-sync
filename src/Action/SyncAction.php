@@ -20,7 +20,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-#[Route('/contao/youtubesync', name: SyncAction::class, defaults: ['_scope' => 'backend', "_token_check" => false])]
+#[Route('/contao/youtubesync', name: self::class, defaults: ['_scope' => 'backend', '_token_check' => false])]
 class SyncAction
 {
     private $newsYouTubeSync;

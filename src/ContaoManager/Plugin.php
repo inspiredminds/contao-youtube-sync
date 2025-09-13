@@ -19,6 +19,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 use Contao\NewsBundle\ContaoNewsBundle;
 use InspiredMinds\ContaoYouTubeSync\ContaoYouTubeSyncBundle;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -35,8 +36,8 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel): ?RouteCollection
     {
         return $resolver
-            ->resolve(__DIR__.'/../Resources/config/routing.yml')
-            ->load(__DIR__.'/../Resources/config/routing.yml')
+            ->resolve(__DIR__.'/../Action', Kernel::MAJOR_VERSION >= 6 ? 'attribute' : 'annotation')
+            ->load(__DIR__.'/../Action')
         ;
     }
 }

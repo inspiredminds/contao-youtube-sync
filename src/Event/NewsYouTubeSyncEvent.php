@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao YouTube Sync extension.
- *
- * (c) inspiredminds
- *
- * @license LGPL-3.0-or-later
+ * (c) INSPIRED MINDS
  */
 
 namespace InspiredMinds\ContaoYouTubeSync\Event;
 
 use Contao\NewsModel;
+use Google\Service\YouTube\PlaylistItem;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -25,20 +22,10 @@ class NewsYouTubeSyncEvent extends Event
      */
     private $discard = false;
 
-    /**
-     * @var NewsModel
-     */
-    private $news;
-
-    /**
-     * @var \Google_Service_YouTube_PlaylistItem
-     */
-    private $video;
-
-    public function __construct(NewsModel $news, \Google_Service_YouTube_PlaylistItem $video)
-    {
-        $this->news = $news;
-        $this->video = $video;
+    public function __construct(
+        private readonly NewsModel $news,
+        private readonly PlaylistItem $video,
+    ) {
     }
 
     /**
@@ -70,7 +57,7 @@ class NewsYouTubeSyncEvent extends Event
     /**
      * The YouTube video instance.
      */
-    public function getVideo(): \Google_Service_YouTube_PlaylistItem
+    public function getVideo(): PlaylistItem
     {
         return $this->video;
     }

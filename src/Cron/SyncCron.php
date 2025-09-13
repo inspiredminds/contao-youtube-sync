@@ -3,33 +3,22 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao YouTube Sync extension.
- *
- * (c) inspiredminds
- *
- * @license LGPL-3.0-or-later
+ * (c) INSPIRED MINDS
  */
 
 namespace InspiredMinds\ContaoYouTubeSync\Cron;
 
-use Contao\CoreBundle\Monolog\ContaoContext;
-use Contao\CoreBundle\ServiceAnnotation\CronJob;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync;
 use Psr\Log\LoggerInterface;
-use Terminal42\ServiceAnnotationBundle\ServiceAnnotationInterface;
 
-/**
- * @CronJob("hourly")
- */
-class SyncCron implements ServiceAnnotationInterface
+#[AsCronJob('hourly')]
+class SyncCron
 {
-    private $newsYouTubeSync;
-    private $logger;
-
-    public function __construct(NewsYouTubeSync $newsYouTubeSync, LoggerInterface $logger)
-    {
-        $this->newsYouTubeSync = $newsYouTubeSync;
-        $this->logger = $logger;
+    public function __construct(
+        private readonly NewsYouTubeSync $newsYouTubeSync,
+        private readonly LoggerInterface $contaoErrorLogger,
+    ) {
     }
 
     public function __invoke(): void
@@ -37,9 +26,7 @@ class SyncCron implements ServiceAnnotationInterface
         try {
             ($this->newsYouTubeSync)();
         } catch (\Throwable $e) {
-            $this->logger->error('Error while synchronising news entries from YouTube: '.$e->getMessage(), [
-                'contao' => new ContaoContext(self::class, 'ERROR'),
-            ]);
+            $this->contaoErrorLogger->error('Error while synchronising news entries from YouTube: '.$e->getMessage());
         }
     }
 }

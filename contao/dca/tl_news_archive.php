@@ -3,29 +3,22 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao YouTube Sync extension.
- *
- * (c) inspiredminds
- *
- * @license LGPL-3.0-or-later
+ * (c) INSPIRED MINDS
  */
 
 use Contao\ArrayUtil;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
-use InspiredMinds\ContaoYouTubeSync\Action\SyncAction;
+use InspiredMinds\ContaoYouTubeSync\Controller\SyncController;
 
 $globalOperation = [
     'youtube_sync_trigger' => [
-        'route' => SyncAction::class,
+        'route' => SyncController::class,
         'icon' => 'bundles/contaoyoutubesync/youtube.svg',
+        'attributes' => 'data-turbo-prefetch="false"',
     ],
 ];
 
-if (class_exists(ArrayUtil::class)) {
-    ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'], 1, $globalOperation);
-} else {
-    array_insert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'], 1, $globalOperation);
-}
+ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'], 1, $globalOperation);
 
 $GLOBALS['TL_DCA']['tl_news_archive']['fields']['enable_youtube_sync'] = [
     'inputType' => 'checkbox',

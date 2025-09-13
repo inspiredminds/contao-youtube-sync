@@ -3,37 +3,28 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao YouTube Sync extension.
- *
- * (c) inspiredminds
- *
- * @license LGPL-3.0-or-later
+ * (c) INSPIRED MINDS
  */
 
-namespace InspiredMinds\ContaoYouTubeSync\Action;
+namespace InspiredMinds\ContaoYouTubeSync\Controller;
 
 use Contao\NewsModel;
 use InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[Route('/contao/youtubesync', name: self::class, defaults: ['_scope' => 'backend', '_token_check' => false])]
-class SyncAction
+class SyncController
 {
-    private $newsYouTubeSync;
-    private $router;
-    private $twig;
-    private $translator;
-
-    public function __construct(NewsYouTubeSync $newsYouTubeSync, RouterInterface $router, Environment $twig, TranslatorInterface $translator)
-    {
-        $this->newsYouTubeSync = $newsYouTubeSync;
-        $this->router = $router;
-        $this->twig = $twig;
-        $this->translator = $translator;
+    public function __construct(
+        private readonly NewsYouTubeSync $newsYouTubeSync,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Environment $twig,
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
     public function __invoke(): Response
@@ -47,10 +38,10 @@ class SyncAction
                 'section_headline' => $this->translator->trans('contao_youtube_sync.backend.section_headline'),
                 'submit_label' => $this->translator->trans('contao_youtube_sync.backend.submit_label'),
                 'back' => $this->translator->trans('MSC.goBack', [], 'contao_default'),
-                'form_action' => $this->router->generate(self::class),
+                'form_action' => $this->urlGenerator->generate(self::class),
                 'count' => $count,
                 'count_label' => $this->translator->trans('contao_youtube_sync.backend.count_label', ['%count%' => $count]),
-            ])
+            ]),
         );
     }
 }

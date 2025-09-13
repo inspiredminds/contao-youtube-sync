@@ -33,11 +33,11 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
         ];
     }
 
-    public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel): ?RouteCollection
+    public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel): RouteCollection|null
     {
         return $resolver
-            ->resolve(__DIR__.'/../Action', Kernel::MAJOR_VERSION >= 6 ? 'attribute' : 'annotation')
-            ->load(__DIR__.'/../Action')
+            ->resolve(__DIR__.'/../Controller', Kernel::MAJOR_VERSION >= 6 ? 'attribute' : 'annotation')
+            ->load(__DIR__.'/../Controller')
         ;
     }
 }

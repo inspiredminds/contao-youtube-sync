@@ -3,18 +3,18 @@ services:
     autoconfigure: true
 
   contao_youtube_sync.google_client:
-    class: Google_Client
+    class: Google\Client
     arguments:
       -
         application_name: '%contao_youtube_sync.application_name%'
         developer_key: '%contao_youtube_sync.developer_key%'
   
   contao_youtube_sync.google_service_youtube:
-    class: Google_Service_YouTube
+    class: Google\Service\YouTube
     arguments:
       - '@contao_youtube_sync.google_client'
 
-  InspiredMinds\ContaoYouTubeSync\Action\SyncAction:
+  InspiredMinds\ContaoYouTubeSync\Controller\SyncController:
     public: true
     arguments:
       - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'

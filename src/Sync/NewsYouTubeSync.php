@@ -3,11 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao YouTube Sync extension.
- *
- * (c) inspiredminds
- *
- * @license LGPL-3.0-or-later
+ * (c) INSPIRED MINDS
  */
 
 namespace InspiredMinds\ContaoYouTubeSync\Sync;
@@ -19,36 +15,35 @@ use Contao\FilesModel;
 use Contao\NewsArchiveModel;
 use Contao\NewsModel;
 use Doctrine\DBAL\Connection;
+use Google\Service\YouTube;
+use Google\Service\YouTube\PlaylistItem;
+use GuzzleHttp\Client;
 use InspiredMinds\ContaoYouTubeSync\Event\NewsYouTubeSyncEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class NewsYouTubeSync
 {
-    private $youtube;
-    private $framework;
-    private $contaoSlug;
-    private $db;
-    private $eventDispatcher;
-    private $projectDir;
-
-    public function __construct(\Google_Service_YouTube $youtube, ContaoFramework $framework, Slug $contaoSlug, Connection $db, EventDispatcherInterface $eventDispatcher, string $projectDir)
-    {
-        $this->youtube = $youtube;
-        $this->framework = $framework;
-        $this->contaoSlug = $contaoSlug;
-        $this->db = $db;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->projectDir = $projectDir;
+    public function __construct(
+        private readonly YouTube $youtube,
+        private readonly ContaoFramework $framework,
+        private readonly Slug $contaoSlug,
+        private readonly Connection $db,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly string $projectDir,
+    ) {
     }
 
     public function __invoke(): void
     {
         $this->framework->initialize();
 
-        $enabledNewsArchives = NewsArchiveModel::findBy([
-            'enable_youtube_sync = 1',
-            "youtube_playlist_id != ''",
-        ], []);
+        $enabledNewsArchives = NewsArchiveModel::findBy(
+            [
+                'enable_youtube_sync = 1',
+                "youtube_playlist_id != ''",
+            ],
+            [],
+        );
 
         if (null === $enabledNewsArchives) {
             return;
@@ -70,7 +65,7 @@ class NewsYouTubeSync
         do {
             $videos = $this->youtube->playlistItems->listPlaylistItems('snippet,contentDetails,status', $params);
 
-            /** @var \Google_Service_YouTube_PlaylistItem $video */
+            /** @var PlaylistItem $video */
             foreach ($videos->getItems() as $video) {
                 $this->processVideo($newsArchive, $video);
             }
@@ -81,7 +76,7 @@ class NewsYouTubeSync
         } while (null !== $videos->getNextPageToken());
     }
 
-    private function processVideo(NewsArchiveModel $newsArchive, \Google_Service_YouTube_PlaylistItem $video): void
+    private function processVideo(NewsArchiveModel $newsArchive, PlaylistItem $video): void
     {
         if ('public' !== $video->getStatus()->getPrivacyStatus()) {
             return;
@@ -89,13 +84,16 @@ class NewsYouTubeSync
 
         $details = $video->getContentDetails();
 
-        $news = NewsModel::findOneBy([
-            'youtube_id = ?',
-            'pid = ?',
-        ], [
-            $details->getVideoId(),
-            (int) $newsArchive->id,
-        ]);
+        $news = NewsModel::findOneBy(
+            [
+                'youtube_id = ?',
+                'pid = ?',
+            ],
+            [
+                $details->getVideoId(),
+                (int) $newsArchive->id,
+            ],
+        );
 
         $snippet = $video->getSnippet();
 
@@ -104,9 +102,7 @@ class NewsYouTubeSync
 
             $news->author = (int) $newsArchive->youtube_sync_author;
             $news->youtube_id = $details->getVideoId();
-            $news->alias = $this->contaoSlug->generate($snippet->getTitle(), $newsArchive->jumpTo, function (string $alias): bool {
-                return ((int) $this->db->fetchOne('SELECT COUNT(*) FROM tl_news WHERE alias = ?', [$alias])) > 0;
-            });
+            $news->alias = $this->contaoSlug->generate($snippet->getTitle(), $newsArchive->jumpTo, fn (string $alias): bool => (int) $this->db->fetchOne('SELECT COUNT(*) FROM tl_news WHERE alias = ?', [$alias]) > 0);
 
             if ($newsArchive->youtube_sync_publish) {
                 $news->published = '1';
@@ -122,15 +118,15 @@ class NewsYouTubeSync
         $news->pid = (int) $newsArchive->id;
         $news->date = strtotime($details->getVideoPublishedAt());
         $news->time = $news->date;
-        $news->youtube_data = json_encode($video->toSimpleObject());
+        $news->youtube_data = json_encode($video->toSimpleObject(), JSON_THROW_ON_ERROR);
 
-        if (!empty($description = trim((string) $snippet->getDescription()))) {
+        if (($description = trim((string) $snippet->getDescription())) !== '' && ($description = trim((string) $snippet->getDescription())) !== '0') {
             // parse URLs (https://gist.github.com/jasny/2000705)
             $description = preg_replace('@(?:(https?)://([^\s<]+)|(www\.[^\s<]+?\.[^\s<]+))(?<![\.,:])@i', '<a href="$0" target="_blank" rel="noopener">$0</a>', $description);
-            $news->teaser = '<p>'.nl2br($description).'</p>';
+            $news->teaser = '<p>'.nl2br((string) $description).'</p>';
         }
 
-        if (null !== ($teaserImage = $this->downloadTeaserImage($newsArchive, $video))) {
+        if ($teaserImage = $this->downloadTeaserImage($newsArchive, $video)) {
             $news->addImage = '1';
             $news->singleSRC = $teaserImage->uuid;
         }
@@ -143,7 +139,7 @@ class NewsYouTubeSync
         }
     }
 
-    private function downloadTeaserImage(NewsArchiveModel $newsArchive, \Google_Service_YouTube_PlaylistItem $video): ?FilesModel
+    private function downloadTeaserImage(NewsArchiveModel $newsArchive, PlaylistItem $video): FilesModel|null
     {
         $thumbnails = $video->getSnippet()->getThumbnails()->toSimpleObject();
         $thumbnailUrl = null;
@@ -169,7 +165,7 @@ class NewsYouTubeSync
                 mkdir($this->projectDir.'/'.$downloadDir, 0777, true);
             }
 
-            (new \GuzzleHttp\Client())->get($thumbnailUrl, ['sink' => $this->projectDir.'/'.$downloadPath]);
+            (new Client())->get($thumbnailUrl, ['sink' => $this->projectDir.'/'.$downloadPath]);
 
             return Dbafs::addResource($downloadPath);
         }

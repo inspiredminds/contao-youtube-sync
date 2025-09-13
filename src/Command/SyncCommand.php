@@ -3,11 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao YouTube Sync extension.
- *
- * (c) inspiredminds
- *
- * @license LGPL-3.0-or-later
+ * (c) INSPIRED MINDS
  */
 
 namespace InspiredMinds\ContaoYouTubeSync\Command;
@@ -19,12 +15,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SyncCommand extends Command
 {
-    private $newsYouTubeSync;
-
-    public function __construct(NewsYouTubeSync $newsYouTubeSync)
+    public function __construct(private readonly NewsYouTubeSync $newsYouTubeSync)
     {
         parent::__construct();
-        $this->newsYouTubeSync = $newsYouTubeSync;
     }
 
     protected function configure(): void

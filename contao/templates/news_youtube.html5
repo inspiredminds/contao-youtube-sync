@@ -1,14 +1,14 @@
 
-<div class="layout_full block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article">
+<div class="layout_full block<?= $this->class ?>">
 
-  <h1 itemprop="name"><?= $this->newsHeadline ?></h1>
+  <h1><?= $this->newsHeadline ?></h1>
 
-  <?php if ($this->hasMetaFields): ?>
-    <p class="info"><time datetime="<?= $this->datetime ?>" itemprop="datePublished"><?= $this->date ?></time> <?= $this->author ?> <?= $this->commentCount ?></p>
-  <?php endif; ?>
+  <?php $this->block('info'); ?>
+    <p class="info"><time datetime="<?= $this->datetime ?>"><?= $this->date ?></time> <?= $this->author ?></p>
+  <?php $this->endblock(); ?>
 
   <?php if ($this->hasSubHeadline): ?>
-    <h2 itemprop="headline"><?= $this->subHeadline ?></h2>
+    <h2><?= $this->subHeadline ?></h2>
   <?php endif; ?>
 
   <?php if ($this->youtube_id): ?>
@@ -36,3 +36,22 @@
   <?php endif; ?>
 
 </div>
+
+<?php
+
+$schemaOrg = $this->getSchemaOrgData();
+
+if ($this->hasText) {
+    $schemaOrg['text'] = $this->rawHtmlToPlainText($this->text);
+}
+
+$this->addSchemaOrg($schemaOrg);
+
+if ($this->figure) {
+    $primaryImage = [
+        '@type' => 'WebPage',
+        'primaryImageOfPage' => $this->figure->getSchemaOrgData(),
+    ];
+
+    $this->addSchemaOrg($primaryImage);
+}

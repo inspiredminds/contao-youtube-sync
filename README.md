@@ -46,7 +46,7 @@ Whenever a YouTube video is imported as a news article (or whenever a news artic
 InspiredMinds\ContaoYouTubeSync\Event\NewsYouTubeSyncEvent
 ```
 
-This event lets you retrieve the `\Contao\NewsModel` to be saved to the database, as well as the `\Google_Service_YouTube_PlaylistItem` instance of the YouTube video. It also allows you to _discard_ the news article (or the changes added to it) by setting `$event->setDiscard(true)`.
+This event lets you retrieve the `\Contao\NewsModel` to be saved to the database, as well as the `\Google\Service\YouTube\PlaylistItem` instance of the YouTube video. It also allows you to _discard_ the news article (or the changes added to it) by setting `$event->setDiscard(true)`.
 
 ## Templates
 

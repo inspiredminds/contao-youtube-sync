@@ -32,7 +32,7 @@ class SyncCommand extends Command
         $this->setDescription('Synchronises all configured news archives with YouTube.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         ($this->newsYouTubeSync)();
 

@@ -25,8 +25,6 @@ services:
   InspiredMinds\ContaoYouTubeSync\Command\SyncCommand:
     arguments:
       - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'
-    tags:
-      - { name: 'console.command', command: 'contao_youtube_sync:sync' }
 
   InspiredMinds\ContaoYouTubeSync\Cron\SyncCron:
     arguments:

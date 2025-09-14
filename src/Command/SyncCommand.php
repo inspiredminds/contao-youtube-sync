@@ -9,10 +9,12 @@ declare(strict_types=1);
 namespace InspiredMinds\ContaoYouTubeSync\Command;
 
 use InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('contao_youtube_sync:sync', 'Synchronises all configured news archives with YouTube.')]
 class SyncCommand extends Command
 {
     public function __construct(private readonly NewsYouTubeSync $newsYouTubeSync)

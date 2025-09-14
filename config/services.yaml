@@ -1,43 +1,23 @@
 services:
-  _defaults:
-    autoconfigure: true
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            $youtube: '@contao_youtube_sync.google_service_youtube'
+            $projectDir: '%kernel.project_dir%'
+    
+    InspiredMinds\ContaoYouTubeSync\:
+        resource: ../src
+        exclude: ../src/{ContaoManager,DependencyInjection,Event,ContaoYouTubeSyncBundle.php}
 
-  contao_youtube_sync.google_client:
-    class: Google\Client
-    arguments:
-      -
-        application_name: '%contao_youtube_sync.application_name%'
-        developer_key: '%contao_youtube_sync.developer_key%'
-  
-  contao_youtube_sync.google_service_youtube:
-    class: Google\Service\YouTube
-    arguments:
-      - '@contao_youtube_sync.google_client'
-
-  InspiredMinds\ContaoYouTubeSync\Controller\SyncController:
-    public: true
-    arguments:
-      - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'
-      - '@router'
-      - '@twig'
-      - '@translator'
-
-  InspiredMinds\ContaoYouTubeSync\Command\SyncCommand:
-    arguments:
-      - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'
-
-  InspiredMinds\ContaoYouTubeSync\Cron\SyncCron:
-    arguments:
-      - '@InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync'
-      - '@logger'
-
-  InspiredMinds\ContaoYouTubeSync\EventListener\ParseArticlesListener: ~
-
-  InspiredMinds\ContaoYouTubeSync\Sync\NewsYouTubeSync:
-    arguments:
-      - '@contao_youtube_sync.google_service_youtube'
-      - '@contao.framework'
-      - '@contao.slug'
-      - '@database_connection'
-      - '@event_dispatcher'
-      - '%kernel.project_dir%'
+    contao_youtube_sync.google_client:
+        class: Google\Client
+        arguments:
+            -
+              application_name: '%contao_youtube_sync.application_name%'
+              developer_key: '%contao_youtube_sync.developer_key%'
+    
+    contao_youtube_sync.google_service_youtube:
+        class: Google\Service\YouTube
+        arguments:
+            - '@contao_youtube_sync.google_client'

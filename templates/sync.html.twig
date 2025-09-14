@@ -1,12 +1,11 @@
-{% extends "@ContaoCore/Backend/be_page.html.twig" %}
+{% extends "@Contao/be_main" %}
 
-{% block headline %}
-  YouTube Synchronisation
-{% endblock %}
+{% set title = 'YouTube Synchronisation' %}
+{% set headline = title %}
 
-{% block main %}
+{% block main_content %}
   <div id="tl_buttons">
-    <a href="contao?do=news" class="header_back" title="">{{ back }}</a>
+    <a href="{{ path('contao_backend', {do: 'news'}) }}" class="header_back" title="">{{ back }}</a>
   </div>
   <div id="calendar_sync_trigger" class="maintenance_inactive">
 
@@ -22,7 +21,4 @@
     </form>
 
   </div>
-{% endblock %}
-
-{% block error %}
 {% endblock %}

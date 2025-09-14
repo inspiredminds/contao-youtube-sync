@@ -2,13 +2,10 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        bind:
-            $youtube: '@contao_youtube_sync.google_service_youtube'
-            $projectDir: '%kernel.project_dir%'
     
     InspiredMinds\ContaoYouTubeSync\:
         resource: ../src
-        exclude: ../src/{ContaoManager,DependencyInjection,Event,ContaoYouTubeSyncBundle.php}
+        exclude: ../src/{ContaoManager,DependencyInjection,Event,Message,ContaoYouTubeSyncBundle.php}
 
     contao_youtube_sync.google_client:
         class: Google\Client

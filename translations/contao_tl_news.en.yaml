@@ -1,0 +1,4 @@
+tl_news:
+    youtube_id:
+        - YouTube ID
+        - The video ID of the synchronised YouTube video.

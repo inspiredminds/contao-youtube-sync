@@ -17,18 +17,26 @@ use Contao\NewsModel;
 use Doctrine\DBAL\Connection;
 use Google\Service\YouTube;
 use Google\Service\YouTube\PlaylistItem;
-use GuzzleHttp\Client;
 use InspiredMinds\ContaoYouTubeSync\Event\NewsYouTubeSyncEvent;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
+use Symfony\Component\HttpClient\Response\StreamableInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class NewsYouTubeSync
 {
     public function __construct(
+        #[Autowire(service: 'contao_youtube_sync.google_service_youtube')]
         private readonly YouTube $youtube,
         private readonly ContaoFramework $framework,
         private readonly Slug $contaoSlug,
         private readonly Connection $db,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly HttpClientInterface $httpClient,
+        private readonly Filesystem $filesystem,
+        #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
     ) {
     }
@@ -154,22 +162,36 @@ class NewsYouTubeSync
             }
         }
 
-        if (null !== $thumbnailUrl && null !== ($targetDir = FilesModel::findByUuid($newsArchive->youtube_sync_dir))) {
-            $fileInfo = new \SplFileInfo($thumbnailUrl);
-            $videoId = $video->getContentDetails()->getVideoId();
-
-            $downloadDir = $targetDir->path.'/'.strtolower(substr($videoId, 0, 1));
-            $downloadPath = $downloadDir.'/'.$videoId.'_'.$fileInfo->getFilename();
-
-            if (!file_exists($this->projectDir.'/'.$downloadDir)) {
-                mkdir($this->projectDir.'/'.$downloadDir, 0777, true);
-            }
-
-            (new Client())->get($thumbnailUrl, ['sink' => $this->projectDir.'/'.$downloadPath]);
-
-            return Dbafs::addResource($downloadPath);
+        if (!$thumbnailUrl) {
+            return null;
         }
 
-        return null;
+        if (!$targetDir = FilesModel::findByUuid($newsArchive->youtube_sync_dir)) {
+            return null;
+        }
+
+        $fileInfo = new \SplFileInfo($thumbnailUrl);
+        $videoId = $video->getContentDetails()->getVideoId();
+        $downloadDir = Path::join($targetDir->path, strtolower(substr($videoId, 0, 1)));
+        $downloadPath = Path::join($downloadDir, $videoId.'_'.$fileInfo->getFilename());
+        $absDownloadPath = Path::join($this->projectDir, $downloadPath);
+
+        if (!file_exists($absDownloadPath)) {
+            $absDownloadDir = Path::join($this->projectDir, $downloadDir);
+
+            if (!file_exists($absDownloadDir)) {
+                $this->filesystem->mkdir($absDownloadDir, 0777);
+            }
+
+            $response = $this->httpClient->request('GET', $thumbnailUrl);
+
+            if ($response instanceof StreamableInterface) {
+                $this->filesystem->dumpFile($downloadPath, $response->toStream());
+            } else {
+                $this->filesystem->dumpFile($downloadPath, $response->getContent());
+            }
+        }
+
+        return Dbafs::addResource($downloadPath);
     }
 }

@@ -5,18 +5,21 @@
 
 {% block main_content %}
   <div id="tl_buttons">
-    <a href="{{ path('contao_backend', {do: 'news'}) }}" class="header_back" title="">{{ back }}</a>
+    <a href="{{ path('contao_backend', {do: 'news'}) }}" class="header_back" title="">{{ 'MSC.goBack'|trans([], 'contao_default') }}</a>
   </div>
   <div id="calendar_sync_trigger" class="maintenance_inactive">
 
-    <h2 class="sub_headline">{{ section_headline }}</h2>
+    <h2 class="sub_headline">{{ 'contao_youtube_sync.backend.section_headline'|trans }}</h2>
 
-    <p class="tl_listing_container">{{ count_label }}</p>
+    {% if count_label is defined %}
+      <p class="tl_listing_container">{{ count_label }}</p>
+    {% else %}
+      <p class="tl_listing_container">{{ 'contao_youtube_sync.backend.dispatched'|trans }}</p>
+    {% endif %}
     
-    <form action="{{ form_action }}" class="tl_form" method="post">
-      <input name="FORM_SUBMIT" value="tl_youtube_sync" type="hidden">
+    <form class="tl_form" method="get">
       <div class="tl_submit_container">
-        <button type="submit" name="maintenance" class="tl_submit">{{ submit_label }}</button>
+        <button type="submit" name="maintenance" class="tl_submit">{{ 'contao_youtube_sync.backend.submit_label'|trans }}</button>
       </div>
     </form>
 

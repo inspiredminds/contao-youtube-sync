@@ -1,3 +1,6 @@
-contao_youtube_sync.backend.section_headline: Import YouTube videos as news
-contao_youtube_sync.backend.submit_label: Import again
-contao_youtube_sync.backend.count_label: '1 entry imported.|%count% entries imported.'
+contao_youtube_sync:
+    backend:
+        section_headline: Import YouTube videos as news
+        submit_label: Import again
+        count_label: '1 entry imported.|%count% entries imported.'
+        dispatched: Import was triggered in the background.

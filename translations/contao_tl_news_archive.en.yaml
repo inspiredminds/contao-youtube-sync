@@ -1,0 +1,21 @@
+tl_news_archive:
+    youtube_sync_legend: YouTube synchronisation
+    enable_youtube_sync: 
+        - Enable YouTube synchronisation
+        - Enables YouTube synchronisation for this archive.
+    youtube_playlist_id: 
+        - YouTube playlist ID
+        - The YouTube playlist ID from which YouTube videos should be fetched as news articles.
+    youtube_sync_author: 
+        - Author
+        - The author any new news article will be assigned to.
+    youtube_sync_publish: 
+        - Publish new entries
+        - Automatically publish newly synchronised entries.
+    youtube_sync_update: 
+        - Update existing entries
+        - Automatically update already synchronised entries.
+    youtube_sync_dir: 
+        - Target directory
+        - Target directory for downloaded teaser images.
+    youtube_sync_trigger: YouTube sync

@@ -1,3 +1,6 @@
-contao_youtube_sync.backend.section_headline: YouTube Videos als Nachrichten importieren
-contao_youtube_sync.backend.submit_label: Erneut importieren
-contao_youtube_sync.backend.count_label: '1 Eintrag importiert.|%count% Einträge importiert.'
+contao_youtube_sync:
+    backend:
+        section_headline: YouTube Videos als Nachrichten importieren
+        submit_label: Erneut importieren
+        count_label: '1 Eintrag importiert.|%count% Einträge importiert.'
+        dispatched: Hintergrundimport wurde ausgelöst.

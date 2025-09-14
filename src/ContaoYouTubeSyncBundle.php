@@ -6,9 +6,9 @@ namespace InspiredMinds\ContaoYouTubeSync;
 
 use InspiredMinds\ContaoYouTubeSync\DependencyInjection\ContaoYouTubeSyncExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class ContaoYouTubeSyncBundle extends Bundle
+class ContaoYouTubeSyncBundle extends AbstractBundle
 {
     public function getContainerExtension(): ExtensionInterface|null
     {
@@ -17,10 +17,5 @@ class ContaoYouTubeSyncBundle extends Bundle
         }
 
         return $this->extension;
-    }
-
-    public function getPath(): string
-    {
-        return \dirname(__DIR__);
     }
 }

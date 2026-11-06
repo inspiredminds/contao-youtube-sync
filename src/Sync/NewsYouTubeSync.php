@@ -19,6 +19,7 @@ use Contao\FilesModel;
 use Contao\NewsArchiveModel;
 use Contao\NewsModel;
 use Doctrine\DBAL\Connection;
+use GuzzleHttp\Exception\TransferException;
 use InspiredMinds\ContaoYouTubeSync\Event\NewsYouTubeSyncEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -130,7 +131,19 @@ class NewsYouTubeSync
             $news->teaser = '<p>'.nl2br($description).'</p>';
         }
 
-        if (null !== ($teaserImage = $this->downloadTeaserImage($newsArchive, $video))) {
+        try {
+            $teaserImage = $this->downloadTeaserImage($newsArchive, $video);
+        } catch (TransferException $e) {
+            // Temporary network problem: skip new videos so that they are retried
+            // (including their image) on the next run instead of aborting the sync.
+            if (null === $news->id) {
+                return;
+            }
+
+            $teaserImage = null;
+        }
+
+        if (null !== $teaserImage) {
             $news->addImage = '1';
             $news->singleSRC = $teaserImage->uuid;
         }
@@ -169,11 +182,41 @@ class NewsYouTubeSync
                 mkdir($this->projectDir.'/'.$downloadDir, 0777, true);
             }
 
-            (new \GuzzleHttp\Client())->get($thumbnailUrl, ['sink' => $this->projectDir.'/'.$downloadPath]);
+            $absolutePath = $this->projectDir.'/'.$downloadPath;
+
+            if (!is_file($absolutePath) || 0 === filesize($absolutePath)) {
+                $this->download($thumbnailUrl, $absolutePath);
+            }
 
             return Dbafs::addResource($downloadPath);
         }
 
         return null;
+    }
+
+    /**
+     * @throws TransferException
+     */
+    private function download(string $url, string $targetPath, int $attempts = 3): void
+    {
+        $client = new \GuzzleHttp\Client(['connect_timeout' => 10, 'timeout' => 30]);
+
+        for ($attempt = 1;; ++$attempt) {
+            try {
+                $client->get($url, ['sink' => $targetPath]);
+
+                return;
+            } catch (TransferException $e) {
+                if (is_file($targetPath)) {
+                    @unlink($targetPath);
+                }
+
+                if ($attempt >= $attempts) {
+                    throw $e;
+                }
+
+                sleep($attempt);
+            }
+        }
     }
 }

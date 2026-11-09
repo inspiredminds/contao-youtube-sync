@@ -12,9 +12,6 @@ return RectorConfig::configure()
         __DIR__.'/contao',
         __DIR__.'/src',
     ])
-    ->withSkip([
-        FirstClassCallableRector::class,
-    ])
     ->withParallel()
     ->withCache(sys_get_temp_dir().'/rector_cache')
 ;

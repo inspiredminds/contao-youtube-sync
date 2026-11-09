@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+/*
+ * (c) INSPIRED MINDS
+ */
+
 namespace InspiredMinds\ContaoYouTubeSync;
 
 use InspiredMinds\ContaoYouTubeSync\DependencyInjection\ContaoYouTubeSyncExtension;
@@ -12,9 +16,7 @@ class ContaoYouTubeSyncBundle extends AbstractBundle
 {
     public function getContainerExtension(): ExtensionInterface|null
     {
-        if (null === $this->extension) {
-            $this->extension = new ContaoYouTubeSyncExtension();
-        }
+        $this->extension ??= new ContaoYouTubeSyncExtension();
 
         return $this->extension;
     }

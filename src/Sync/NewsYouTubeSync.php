@@ -18,11 +18,14 @@ use Doctrine\DBAL\Connection;
 use Google\Service\YouTube;
 use Google\Service\YouTube\PlaylistItem;
 use InspiredMinds\ContaoYouTubeSync\Event\NewsYouTubeSyncEvent;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpClient\Response\StreamableInterface;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class NewsYouTubeSync
@@ -36,6 +39,8 @@ class NewsYouTubeSync
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly HttpClientInterface $httpClient,
         private readonly Filesystem $filesystem,
+        private readonly LockFactory $lockFactory,
+        private readonly LoggerInterface $logger,
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
     ) {
@@ -43,6 +48,14 @@ class NewsYouTubeSync
 
     public function __invoke(): void
     {
+        $lock = $this->lockFactory->createLock(hash('xxh3', __FILE__));
+
+        if (!$lock->acquire(false)) {
+            $this->logger->warning('NewsYouTubeSync already running');
+
+            return;
+        }
+
         $this->framework->initialize();
 
         $enabledNewsArchives = NewsArchiveModel::findBy(
@@ -121,6 +134,8 @@ class NewsYouTubeSync
             }
         }
 
+        $this->logger->info(\sprintf('Importing YouTube video ID %s to news archive "%s"', $details->getVideoId(), $newsArchive->title));
+
         $news->tstamp = time();
         $news->headline = $snippet->getTitle();
         $news->pid = (int) $newsArchive->id;
@@ -134,9 +149,18 @@ class NewsYouTubeSync
             $news->teaser = '<p>'.nl2br((string) $description).'</p>';
         }
 
-        if ($teaserImage = $this->downloadTeaserImage($newsArchive, $video)) {
-            $news->addImage = '1';
-            $news->singleSRC = $teaserImage->uuid;
+        try {
+            if ($teaserImage = $this->downloadTeaserImage($newsArchive, $video)) {
+                $news->addImage = '1';
+                $news->singleSRC = $teaserImage->uuid;
+            }
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->warning(\sprintf('Could not download the teaser image for YouTube video ID %s', $details->getVideoId()), ['exception' => $e]);
+
+            // If this is a new entry, skip it for now
+            if (!$news->id) {
+                return;
+            }
         }
 
         $event = new NewsYouTubeSyncEvent($news, $video);
